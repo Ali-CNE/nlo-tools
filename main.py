@@ -1,4 +1,4 @@
-from parser import load_tensor
+from tensor_parser import load_tensor
 
 from analysis import compute_surface
 from analysis import compute_planes
