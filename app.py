@@ -72,8 +72,19 @@ st.sidebar.caption("©Institute of Materials Informatics")
 # ==========================================================
 if page == "🏠 Home":
 
-    st.title("⚛️ Nonlinear Optical (NLO) Tensor Analyzer")
-    st.markdown("---")
+    st.title("⚛️ ATANLO: Nonlinear Optical (NLO) Tensor Analyzer")
+    st.markdown(
+        """
+        <p style="font-size: 18px; color: #666666; margin-top: -15px;">
+        ATANLO is a <strong>free, open-access online tool</strong> to analyze hyperpolarizability tensors, 
+        developed by <b>Fatema Nusrat</b> and 
+        <b><a href="https://scholar.google.com/citations?user=g1vbQbQAAAAJ&hl=en" target="_blank" style="color: #0066cc; text-decoration: underline;">Ali Hossain</a></b> at the 
+        <a href="https://www.imi-bd.com" target="_blank" style="color: #0066cc; text-decoration: underline;">Institute of Materials Informatics</a>.
+        </p>
+        """,
+        unsafe_allow_html=True
+    )
+
 
     st.markdown(
         """
@@ -150,8 +161,13 @@ if page == "🏠 Home":
 # ==========================================================
 if page == "🔬 Analyzer":
 
-    st.title("Nonlinear Optical (NLO) Tensor Analyzer")
-    st.caption("Interactive visualization of β tensors")
+    st.title("⚛️ ATANLO: Nonlinear Optical (NLO) Tensor Analyzer")
+    st.markdown(
+        '<p style="font-size: 20px; color: #666666; margin-top: -15px;">'
+        'Interactive visualization of β tensors'
+        '</p>',
+        unsafe_allow_html=True
+    )
 
     input_mode = st.radio(
         "Select input method",
@@ -194,7 +210,7 @@ if page == "🔬 Analyzer":
 
         beta = st.session_state.beta
 
-        st.header("Calculated Hyperpolarizability")
+        st.header("Calculated Hyperpolarizability (au)")
 
         if input_mode == "Gaussian Dataset Dynamic":
             beta_vec = beta_vector_dynamic(beta)
@@ -208,29 +224,68 @@ if page == "🔬 Analyzer":
 
         c1, c2, c3, c4 = st.columns(4)
 
-        c1.metric("βx", f"{beta_vec[0]:.3f}")
-        c2.metric("βy", f"{beta_vec[1]:.3f}")
-        c3.metric("βz", f"{beta_vec[2]:.3f}")
-        c4.metric("βtotal", f"{beta_tot:.3f}")
+#        c1.metric(r"$\beta_{\text{x}}$", f"{beta_vec[0]:.3f}")
+#        c2.metric(r"$\beta_{\text{y}}$", f"{beta_vec[1]:.3f}")
+#        c3.metric(r"$\beta_{\text{z}}$", f"{beta_vec[2]:.3f}")
+#        c4.metric(r"$\beta_{\text{total}}$", f"{beta_tot:.3f}")
+
+        with c1:
+            st.markdown(r"### $\beta_{\text{x}}$")
+            st.metric(label="x-component", value=f"{beta_vec[0]:.3f}")
+
+        with c2:
+            st.markdown(r"### $\beta_{\text{y}}$")
+            st.metric(label="y-component", value=f"{beta_vec[1]:.3f}")
+
+        with c3:
+            st.markdown(r"### $\beta_{\text{z}}$")
+            st.metric(label="z-component", value=f"{beta_vec[2]:.3f}")
+
+        with c4:
+            st.markdown(r"### $\beta_{\text{total}}$")
+            st.metric(label="Total", value=f"{beta_tot:.3f}")
+            
 
         st.divider()
         st.header("Hyper-Rayleigh Scattering")
 
         c1, c2, c3 = st.columns(3)
 
-        c1.metric("βHRS", f"{hrs['beta_HRS']:.4f}")
-        c2.metric("Depolarization Ratio", f"{hrs['DR']:.4f}")
-        c3.metric("ρ", f"{hrs['rho']:.4f}")
+        with c1:
+            st.markdown(r"### $\beta_{\text{HRS}}$")
+            st.metric(label="Total HRS Response", value=f"{hrs['beta_HRS']:.4f}")
+
+        with c2:
+            st.markdown(r"### $DR$")
+            st.metric(label="Depolarization Ratio", value=f"{hrs['DR']:.4f}")
+
+        with c3:
+            st.markdown(r"### $\rho$")
+            st.metric(label="Nonlinear Anisotropy", value=f"{hrs['rho']:.4f}")
+
+        st.divider()
 
         c1, c2 = st.columns(2)
 
-        c1.metric("⟨βZZZ²⟩", f"{hrs['beta_ZZZ2']:.4f}")
-        c2.metric("⟨βXZZ²⟩", f"{hrs['beta_XZZ2']:.4f}")
+        with c1:
+            st.markdown(r"### $\langle \beta_{ZZZ}^2 \rangle$")
+            st.metric(label="Co-polarized Average", value=f"{hrs['beta_ZZZ2']:.4f}")
+
+        with c2:
+            st.markdown(r"### $\langle \beta_{XZZ}^2 \rangle$")
+            st.metric(label="Cross-polarized Average", value=f"{hrs['beta_XZZ2']:.4f}")
+
+        st.divider()
 
         c1, c2 = st.columns(2)
 
-        c1.metric("|βJ=1|", f"{hrs['beta_J1']:.4f}")
-        c2.metric("|βJ=3|", f"{hrs['beta_J3']:.4f}")
+        with c1:
+            st.markdown(r"### $|\beta_{J=1}|$")
+            st.metric(label="Dipolar Invariant", value=f"{hrs['beta_J1']:.4f}")
+
+        with c2:
+            st.markdown(r"### $|\beta_{J=3}|$")
+            st.metric(label="Octupolar Invariant", value=f"{hrs['beta_J3']:.4f}")
 
         st.subheader("Dipolar / Octupolar Contribution")
 
