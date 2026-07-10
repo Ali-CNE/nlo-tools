@@ -167,40 +167,12 @@ def compute_hrs_quantities(beta):
     else:
         rho = np.nan
 
-    # 5. Dipolar / Octupolar decomposition
-    if np.isnan(rho):
-        beta_J1 = np.nan
-        beta_J3 = np.nan
-        phi_dipolar = np.nan
-        phi_octupolar = np.nan
-    else:
-        a = b_hrs**2 * (1.0 + 4.0 * rho) / (3.0 + 3.0 * rho)
-        b = b_hrs**2 * (2.0 - 2.0 * rho) / (3.0 + 3.0 * rho)
-
-        a = max(a, 0.0)
-        b = max(b, 0.0)
-
-        beta_J1 = np.sqrt(a)
-        beta_J3 = np.sqrt(b)
-
-        total = a + b
-        if total > 0:
-            phi_dipolar = a / total
-            phi_octupolar = b / total
-        else:
-            phi_dipolar = np.nan
-            phi_octupolar = np.nan
-
     return {
         "beta_ZZZ2": b_zzz2,
         "beta_XZZ2": b_xzz2,
         "beta_HRS": b_hrs,
         "DR": dr,
         "rho": rho,
-        "beta_J1": beta_J1,
-        "beta_J3": beta_J3,
-        "phi_dipolar": phi_dipolar,
-        "phi_octupolar": phi_octupolar,
     }
 
 # ==========================================================
@@ -236,9 +208,4 @@ if __name__ == "__main__":
     print(f"Depolarization DR  : {results['DR']:.6f}")
     print(f"ρ                  : {results['rho']:.6f}")
     print("-------------------------------------------")
-    print(f"|βJ=1|             : {results['beta_J1']:.6f}")
-    print(f"|βJ=3|             : {results['beta_J3']:.6f}")
-    print("-------------------------------------------")
-    print(f"Dipolar (%)        : {results['phi_dipolar']*100:.2f}")
-    print(f"Octupolar (%)      : {results['phi_octupolar']*100:.2f}")
     print("\n===========================================\n")

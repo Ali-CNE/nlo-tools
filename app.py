@@ -4,7 +4,9 @@ import streamlit as st
 from tensor_parser import parse_tensor
 from gaussian_parser import parse_gaussian_static_beta
 from gaussian_dynamic_parser import parse_gaussian_dynamic_beta
+from orca_parser import parse_orca_beta
 from hrs import compute_hrs_quantities
+from di_oc import compute_exact_spherical_invariants 
 
 from analysis import (
     compute_surface,
@@ -172,9 +174,10 @@ if page == "🔬 Analyzer":
     input_mode = st.radio(
         "Select input method",
         (
-            "β Tensor",
-            "Gaussian Dataset Static",
-            "Gaussian Dataset Dynamic",
+            "Manual Tensor",
+            "Gaussian Static Tensor",
+            "Gaussian Dynamic Tensor",
+            "ORCA Tensor",
         ),
         horizontal=True,
     )
@@ -188,14 +191,17 @@ if page == "🔬 Analyzer":
 
         try:
 
-            if input_mode == "β Tensor":
+            if input_mode == "Manual Tensor":
                 beta = parse_tensor(input_text)
 
-            elif input_mode == "Gaussian Dataset Static":
+            elif input_mode == "Gaussian Static Tensor":
                 beta = parse_gaussian_static_beta(input_text)
 
-            else:
+            elif input_mode == "Gaussian Dynamic Tensor":
                 beta = parse_gaussian_dynamic_beta(input_text)
+
+            elif input_mode == "ORCA Tensor":
+                beta = parse_orca_beta(input_text)
 
             st.session_state.beta = beta
             st.success("Analysis completed successfully")
