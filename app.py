@@ -6,7 +6,6 @@ from gaussian_parser import parse_gaussian_static_beta
 from gaussian_dynamic_parser import parse_gaussian_dynamic_beta
 from orca_parser import parse_orca_beta
 from hrs import compute_hrs_quantities
-from di_oc import compute_exact_spherical_invariants 
 
 from analysis import (
     compute_surface,
@@ -79,8 +78,8 @@ if page == "🏠 Home":
         """
         <p style="font-size: 18px; color: #666666; margin-top: -15px;">
         ATANLO is a <strong>free, open-access online tool</strong> to analyze hyperpolarizability tensors, 
-        developed by <b>Fatema Nusrat</b> and 
-        <b><a href="https://scholar.google.com/citations?user=g1vbQbQAAAAJ&hl=en" target="_blank" style="color: #0066cc; text-decoration: underline;">Ali Hossain</a></b> at the 
+        developed by <b><a href="https://ustc.ac.bd/fm-fatema-nusrat/" target="_blank" style="color: #0066cc; text-decoration: underline;">Fatema Nusrat</a></b> and 
+        <b><a href="https://www.imi-bd.com/people" target="_blank" style="color: #0066cc; text-decoration: underline;">Ali Hossain</a></b> at the 
         <a href="https://www.imi-bd.com" target="_blank" style="color: #0066cc; text-decoration: underline;">Institute of Materials Informatics</a>.
         </p>
         """,
@@ -92,13 +91,14 @@ if page == "🏠 Home":
         """
         ### Welcome
 
-        This tool provides interactive analysis and visualization of **first hyperpolarizability (β) tensors** obtained from quantum chemistry calculations.
+        Welcome to the ATANLO: Nonlinear Optical (NLO) Tensor Analyzer. This tool provides interactive analysis and visualization of **first hyperpolarizability (β) tensors** obtained from quantum chemistry calculations.
 
         It supports:
 
         - Manual β tensor input
         - Gaussian static output parsing
-        - Gaussian frequency-dependent (dynamic) β tensors
+        - Gaussian frequency-dependent (dynamic) output parsing
+        - ORCA output parsing
         - 3D tensor visualization
         - Polar and signed directional analysis
 
@@ -128,9 +128,10 @@ if page == "🏠 Home":
 
         ### Scientific capabilities
 
-        ✔ Tensor reconstruction from Gaussian output  
-        ✔ β-vector and β-total computation  
-        ✔ Directional hyperpolarizability mapping  
+        ✔ Tensor reconstruction from different quantum computation outputs (Gaussian, ORCA, etc.)  
+        ✔ β-vector and β-total computation
+        ✔ Hyper-Rayleigh Scattering (HRS) analysis   
+        ✔ Directional hyperpolarizability mapping
         ✔ 3D anisotropy surface visualization  
         ✔ Polar plane decomposition  
 
@@ -282,7 +283,7 @@ if page == "🔬 Analyzer":
             st.metric(label="Cross-polarized Average", value=f"{hrs['beta_XZZ2']:.4f}")
 
         st.divider()
-
+ 
         c1, c2 = st.columns(2)
 
         with c1:

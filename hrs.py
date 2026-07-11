@@ -140,12 +140,67 @@ def beta_XZZ2(beta):
 
     return value
 
+
+# ======================================================================
+# Irreducible Spherical Tensor Decomposition Module
+# ======================================================================
+def compute_exact_spherical_invariants(beta):
+    """
+    Computes mathematically exact J=1 (dipolar) and J=3 (octupolar)
+    irreducible spherical tensor invariants directly from any 3x3x3 Cartesian tensor.
+    """
+    B = tensor3(beta)
+        
+    # Build the completely symmetrized tensor (S)
+    S = np.zeros((3, 3, 3))
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                S[i,j,k] = (B[i,j,k] + B[i,k,j] + B[j,i,k] + B[j,k,i] + B[k,i,j] + B[k,j,i]) / 6.0
+
+    # Compute the exact J=1 Vector elements
+    V = np.zeros(3)
+    for i in range(3):
+        s = 0.0
+        for j in range(3):
+            s += B[i, j, j] + B[j, i, j] + B[j, j, i]
+        V[i] = s / 5.0
+
+    # Compute Invariant Norms Squared
+    norm_J1_sq = np.sum(V**2)
+    
+    # Sum of squares of the fully symmetric tensor elements
+    sum_S_sq = np.sum(S**2)
+    norm_J3_sq = sum_S_sq - (5.0 / 3.0) * norm_J1_sq
+    
+    # Extract Final Exact Magnitudes
+    beta_J1 = np.sqrt(max(0.0, norm_J1_sq))
+    beta_J3 = np.sqrt(max(0.0, norm_J3_sq))
+    
+    # Exact Percentage Weights
+    total_sq = norm_J1_sq + norm_J3_sq
+    if total_sq > 1e-12:
+        phi_dipolar = norm_J1_sq / total_sq
+        phi_octupolar = norm_J3_sq / total_sq
+    else:
+        phi_dipolar = 0.0
+        phi_octupolar = 0.0
+        
+    return {
+        "beta_J1": beta_J1,
+        "beta_J3": beta_J3,
+        "phi_dipolar": phi_dipolar,
+        "phi_octupolar": phi_octupolar,
+    }
+
+
 # ==========================================================
 # Comprehensive Public Wrapper for Streamlit
 # ==========================================================
 def compute_hrs_quantities(beta):
     """
-    Compute Multiwfn-style Hyper-Rayleigh Scattering (HRS) quantities.
+    Compute Multiwfn-style Hyper-Rayleigh Scattering (HRS) quantities
+    fused with direct irreducible spherical tensor analysis.
     """
     # 1. Calculate underlying base rotational averages
     b_zzz2 = beta_ZZZ2(beta)
@@ -167,13 +222,21 @@ def compute_hrs_quantities(beta):
     else:
         rho = np.nan
 
-    return {
+    # Pack fundamental metrics
+    hrs_data = {
         "beta_ZZZ2": b_zzz2,
         "beta_XZZ2": b_xzz2,
         "beta_HRS": b_hrs,
         "DR": dr,
         "rho": rho,
     }
+
+    # 5. Automatically compute and update with exact spherical metrics
+    spherical_data = compute_exact_spherical_invariants(beta)
+    hrs_data.update(spherical_data)
+
+    return hrs_data
+
 
 # ==========================================================
 # Self-test Execution Block
@@ -197,8 +260,8 @@ if __name__ == "__main__":
         [-495.894, 330.497, -1195.450]
     ])
 
-    beta_input = [beta_x, beta_y, beta_z]
-    results = compute_hrs_quantities(beta_input)
+    beta = [beta_x, beta_y, beta_z]
+    results = compute_hrs_quantities(beta)
 
     print("\n========== HRS Analysis ==========\n")
     print(f"<βZZZ²>            : {results['beta_ZZZ2']:.6f}")
@@ -208,4 +271,9 @@ if __name__ == "__main__":
     print(f"Depolarization DR  : {results['DR']:.6f}")
     print(f"ρ                  : {results['rho']:.6f}")
     print("-------------------------------------------")
+    print(f"|βJ=1|             : {results['beta_J1']:.6f}")
+    print(f"|βJ=3|             : {results['beta_J3']:.6f}")
+    print("-------------------------------------------")
+    print(f"Dipolar (%)        : {results['phi_dipolar']*100:.2f}")
+    print(f"Octupolar (%)      : {results['phi_octupolar']*100:.2f}")
     print("\n===========================================\n")
